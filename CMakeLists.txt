@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.1)
-project(assignment7)
+project(Canvas)
 
 ################################################################################
 
 # Directory to external libraries used in the project
-set(THIRD_PARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../ext/)
+set(THIRD_PARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ext/)
 
 # Project sources
 add_executable(${PROJECT_NAME}
