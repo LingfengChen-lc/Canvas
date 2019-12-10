@@ -1124,14 +1124,6 @@ GL/glu.h
 vulkan/vulkan.h
 -
 
-/Users/WangZheng/Desktop/Fall2019/CG/Canvas/src/helpers.cpp
-helpers.h
-/Users/WangZheng/Desktop/Fall2019/CG/Canvas/src/helpers.h
-iostream
--
-fstream
--
-
 /Users/WangZheng/Desktop/Fall2019/CG/Canvas/src/helpers.h
 glad/glad.h
 -
