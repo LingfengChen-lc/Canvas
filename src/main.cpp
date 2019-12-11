@@ -97,17 +97,20 @@ Matrix4f creat_rubber(const float &x, const float &y) {
 
 
 //detect if the given vertex inside the rubber
-bool inside_rubber(const Matrix4f &rubber, const Vector4f &point){
+std::vector<int> inside_rubber(const Matrix4f &rubber){
+	std::vector<int> rst;
 	Vector4f B_L = rubber.col(3);
 	Vector4f U_R = rubber.col(1);
-	float x = point[0];
-	float y = point[1];
-	if (x > B_L[0] && x < U_R[0]){
-		if (y >= B_L[1] && y <= U_R[1]){
-			return true;
+	for (int i = 0; i < Full.cols(); ++i){
+		float x = Full.col(i)[0];
+		float y = Full.col(i)[1];
+		if (x > B_L[0] && x < U_R[0]){
+			if (y > B_L[1] && y < U_R[1]){
+				rst.push_back(i);
+			}
 		}
 	}
-	return false;
+	return rst;
 }
 
 void remove_column(MatrixXf &matrix, int &ColToRemove){
@@ -149,10 +152,9 @@ void mouse_move_callback(GLFWwindow* window, double xpos, double ypos) {
 	if (erase){
 		//draw a rectangle around the world position
 		rubber_box = creat_rubber(world[0], world[1]);
-		// std::cerr << "rubber_box: " << rubber_box << std::endl;
+		std::cerr << "rubber_box: " << rubber_box << std::endl;
 		// std::cerr << "erase: " << erase << std::endl;
-		// std::cerr << "draw: " << draw << std::endl;
-		
+		// std::cerr << "draw: " << draw << std::endl;		
 		Full.col(points) =  rubber_box.col(0);
 		Full.col(points+1) =  rubber_box.col(1);
 		Full.col(points+2) =  rubber_box.col(2);
@@ -162,15 +164,15 @@ void mouse_move_callback(GLFWwindow* window, double xpos, double ypos) {
 		Color.col(points+2) << WHITE;
 		Color.col(points+3) << WHITE;
 		if (erase_hold) {
-			for (int i = 0; i<Full.cols(); ++i){
-				Vector4f point = Full.col(i);
-				if (inside_rubber(rubber_box, point)){
-					//attempt1: make the color as background color
+			std::vector<int> list_pt_inside = inside_rubber(rubber_box);
+			std::cerr << "points inside: " << list_pt_inside.size() << std::endl;
+			int num_points_inside = list_pt_inside.size();
 
-					//attemp2: remove vertex from the Full vector
-					remove_column(Full, i);
-				}
+			for (int i = 0; i < num_points_inside; ++i){
+				remove_column(Full, list_pt_inside[i]);
+				remove_column(Color, list_pt_inside[i]);
 			}
+			points -= num_points_inside;
 		}
 		std::cerr << "erase_hold: " << erase_hold << std::endl;
 
