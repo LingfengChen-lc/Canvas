@@ -1124,7 +1124,7 @@ GL/glu.h
 vulkan/vulkan.h
 -
 
-/Users/WangZheng/Desktop/Fall2019/CG/Canvas/src/helpers.h
+/Users/WangZheng/Desktop/Coding/Canvas/src/helpers.h
 glad/glad.h
 -
 Eigen/Dense
@@ -1134,9 +1134,9 @@ vector
 string
 -
 
-/Users/WangZheng/Desktop/Fall2019/CG/Canvas/src/main.cpp
+/Users/WangZheng/Desktop/Coding/Canvas/src/main.cpp
 helpers.h
-/Users/WangZheng/Desktop/Fall2019/CG/Canvas/src/helpers.h
+/Users/WangZheng/Desktop/Coding/Canvas/src/helpers.h
 GLFW/glfw3.h
 -
 Eigen/Dense

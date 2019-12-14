@@ -43,10 +43,10 @@ RM = /usr/local/Cellar/cmake/3.15.3/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/WangZheng/Desktop/Fall2019/CG/Canvas
+CMAKE_SOURCE_DIR = /Users/WangZheng/Desktop/Coding/Canvas
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/WangZheng/Desktop/Fall2019/CG/Canvas/build
+CMAKE_BINARY_DIR = /Users/WangZheng/Desktop/Coding/Canvas/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/Canvas.dir/depend.make
@@ -59,29 +59,29 @@ include CMakeFiles/Canvas.dir/flags.make
 
 CMakeFiles/Canvas.dir/src/main.cpp.o: CMakeFiles/Canvas.dir/flags.make
 CMakeFiles/Canvas.dir/src/main.cpp.o: ../src/main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/WangZheng/Desktop/Fall2019/CG/Canvas/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Canvas.dir/src/main.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Canvas.dir/src/main.cpp.o -c /Users/WangZheng/Desktop/Fall2019/CG/Canvas/src/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/WangZheng/Desktop/Coding/Canvas/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Canvas.dir/src/main.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Canvas.dir/src/main.cpp.o -c /Users/WangZheng/Desktop/Coding/Canvas/src/main.cpp
 
 CMakeFiles/Canvas.dir/src/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Canvas.dir/src/main.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/WangZheng/Desktop/Fall2019/CG/Canvas/src/main.cpp > CMakeFiles/Canvas.dir/src/main.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/WangZheng/Desktop/Coding/Canvas/src/main.cpp > CMakeFiles/Canvas.dir/src/main.cpp.i
 
 CMakeFiles/Canvas.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Canvas.dir/src/main.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/WangZheng/Desktop/Fall2019/CG/Canvas/src/main.cpp -o CMakeFiles/Canvas.dir/src/main.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/WangZheng/Desktop/Coding/Canvas/src/main.cpp -o CMakeFiles/Canvas.dir/src/main.cpp.s
 
 CMakeFiles/Canvas.dir/src/helpers.cpp.o: CMakeFiles/Canvas.dir/flags.make
 CMakeFiles/Canvas.dir/src/helpers.cpp.o: ../src/helpers.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/WangZheng/Desktop/Fall2019/CG/Canvas/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/Canvas.dir/src/helpers.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Canvas.dir/src/helpers.cpp.o -c /Users/WangZheng/Desktop/Fall2019/CG/Canvas/src/helpers.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/WangZheng/Desktop/Coding/Canvas/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/Canvas.dir/src/helpers.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Canvas.dir/src/helpers.cpp.o -c /Users/WangZheng/Desktop/Coding/Canvas/src/helpers.cpp
 
 CMakeFiles/Canvas.dir/src/helpers.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Canvas.dir/src/helpers.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/WangZheng/Desktop/Fall2019/CG/Canvas/src/helpers.cpp > CMakeFiles/Canvas.dir/src/helpers.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/WangZheng/Desktop/Coding/Canvas/src/helpers.cpp > CMakeFiles/Canvas.dir/src/helpers.cpp.i
 
 CMakeFiles/Canvas.dir/src/helpers.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Canvas.dir/src/helpers.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/WangZheng/Desktop/Fall2019/CG/Canvas/src/helpers.cpp -o CMakeFiles/Canvas.dir/src/helpers.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/WangZheng/Desktop/Coding/Canvas/src/helpers.cpp -o CMakeFiles/Canvas.dir/src/helpers.cpp.s
 
 # Object files for target Canvas
 Canvas_OBJECTS = \
@@ -97,7 +97,7 @@ Canvas: CMakeFiles/Canvas.dir/build.make
 Canvas: glfw/src/libglfw3.a
 Canvas: glad/libglad.a
 Canvas: CMakeFiles/Canvas.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/WangZheng/Desktop/Fall2019/CG/Canvas/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable Canvas"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/WangZheng/Desktop/Coding/Canvas/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable Canvas"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/Canvas.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -110,6 +110,6 @@ CMakeFiles/Canvas.dir/clean:
 .PHONY : CMakeFiles/Canvas.dir/clean
 
 CMakeFiles/Canvas.dir/depend:
-	cd /Users/WangZheng/Desktop/Fall2019/CG/Canvas/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/WangZheng/Desktop/Fall2019/CG/Canvas /Users/WangZheng/Desktop/Fall2019/CG/Canvas /Users/WangZheng/Desktop/Fall2019/CG/Canvas/build /Users/WangZheng/Desktop/Fall2019/CG/Canvas/build /Users/WangZheng/Desktop/Fall2019/CG/Canvas/build/CMakeFiles/Canvas.dir/DependInfo.cmake --color=$(COLOR)
+	cd /Users/WangZheng/Desktop/Coding/Canvas/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/WangZheng/Desktop/Coding/Canvas /Users/WangZheng/Desktop/Coding/Canvas /Users/WangZheng/Desktop/Coding/Canvas/build /Users/WangZheng/Desktop/Coding/Canvas/build /Users/WangZheng/Desktop/Coding/Canvas/build/CMakeFiles/Canvas.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/Canvas.dir/depend
 

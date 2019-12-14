@@ -44,10 +44,10 @@ RM = /usr/local/Cellar/cmake/3.15.3/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/WangZheng/Desktop/Fall2019/CG/Canvas
+CMAKE_SOURCE_DIR = /Users/WangZheng/Desktop/Coding/Canvas
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/WangZheng/Desktop/Fall2019/CG/Canvas/build
+CMAKE_BINARY_DIR = /Users/WangZheng/Desktop/Coding/Canvas/build
 
 #=============================================================================
 # Directory level rules for the build root directory
@@ -80,14 +80,14 @@ CMakeFiles/Canvas.dir/all: glfw/src/CMakeFiles/glfw.dir/all
 CMakeFiles/Canvas.dir/all: glad/CMakeFiles/glad.dir/all
 	$(MAKE) -f CMakeFiles/Canvas.dir/build.make CMakeFiles/Canvas.dir/depend
 	$(MAKE) -f CMakeFiles/Canvas.dir/build.make CMakeFiles/Canvas.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/WangZheng/Desktop/Fall2019/CG/Canvas/build/CMakeFiles --progress-num=1,2,3 "Built target Canvas"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/WangZheng/Desktop/Coding/Canvas/build/CMakeFiles --progress-num=1,2,3 "Built target Canvas"
 .PHONY : CMakeFiles/Canvas.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/Canvas.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/WangZheng/Desktop/Fall2019/CG/Canvas/build/CMakeFiles 21
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/WangZheng/Desktop/Coding/Canvas/build/CMakeFiles 21
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/Canvas.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/WangZheng/Desktop/Fall2019/CG/Canvas/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/WangZheng/Desktop/Coding/Canvas/build/CMakeFiles 0
 .PHONY : CMakeFiles/Canvas.dir/rule
 
 # Convenience name for target.
@@ -126,14 +126,14 @@ glfw/preinstall: glfw/src/preinstall
 glfw/CMakeFiles/uninstall.dir/all:
 	$(MAKE) -f glfw/CMakeFiles/uninstall.dir/build.make glfw/CMakeFiles/uninstall.dir/depend
 	$(MAKE) -f glfw/CMakeFiles/uninstall.dir/build.make glfw/CMakeFiles/uninstall.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/WangZheng/Desktop/Fall2019/CG/Canvas/build/CMakeFiles --progress-num= "Built target uninstall"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/WangZheng/Desktop/Coding/Canvas/build/CMakeFiles --progress-num= "Built target uninstall"
 .PHONY : glfw/CMakeFiles/uninstall.dir/all
 
 # Build rule for subdir invocation for target.
 glfw/CMakeFiles/uninstall.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/WangZheng/Desktop/Fall2019/CG/Canvas/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/WangZheng/Desktop/Coding/Canvas/build/CMakeFiles 0
 	$(MAKE) -f CMakeFiles/Makefile2 glfw/CMakeFiles/uninstall.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/WangZheng/Desktop/Fall2019/CG/Canvas/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/WangZheng/Desktop/Coding/Canvas/build/CMakeFiles 0
 .PHONY : glfw/CMakeFiles/uninstall.dir/rule
 
 # Convenience name for target.
@@ -171,14 +171,14 @@ glfw/src/preinstall:
 glfw/src/CMakeFiles/glfw.dir/all:
 	$(MAKE) -f glfw/src/CMakeFiles/glfw.dir/build.make glfw/src/CMakeFiles/glfw.dir/depend
 	$(MAKE) -f glfw/src/CMakeFiles/glfw.dir/build.make glfw/src/CMakeFiles/glfw.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/WangZheng/Desktop/Fall2019/CG/Canvas/build/CMakeFiles --progress-num=6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21 "Built target glfw"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/WangZheng/Desktop/Coding/Canvas/build/CMakeFiles --progress-num=6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21 "Built target glfw"
 .PHONY : glfw/src/CMakeFiles/glfw.dir/all
 
 # Build rule for subdir invocation for target.
 glfw/src/CMakeFiles/glfw.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/WangZheng/Desktop/Fall2019/CG/Canvas/build/CMakeFiles 16
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/WangZheng/Desktop/Coding/Canvas/build/CMakeFiles 16
 	$(MAKE) -f CMakeFiles/Makefile2 glfw/src/CMakeFiles/glfw.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/WangZheng/Desktop/Fall2019/CG/Canvas/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/WangZheng/Desktop/Coding/Canvas/build/CMakeFiles 0
 .PHONY : glfw/src/CMakeFiles/glfw.dir/rule
 
 # Convenience name for target.
@@ -216,14 +216,14 @@ glad/preinstall:
 glad/CMakeFiles/glad.dir/all:
 	$(MAKE) -f glad/CMakeFiles/glad.dir/build.make glad/CMakeFiles/glad.dir/depend
 	$(MAKE) -f glad/CMakeFiles/glad.dir/build.make glad/CMakeFiles/glad.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/WangZheng/Desktop/Fall2019/CG/Canvas/build/CMakeFiles --progress-num=4,5 "Built target glad"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/WangZheng/Desktop/Coding/Canvas/build/CMakeFiles --progress-num=4,5 "Built target glad"
 .PHONY : glad/CMakeFiles/glad.dir/all
 
 # Build rule for subdir invocation for target.
 glad/CMakeFiles/glad.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/WangZheng/Desktop/Fall2019/CG/Canvas/build/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/WangZheng/Desktop/Coding/Canvas/build/CMakeFiles 2
 	$(MAKE) -f CMakeFiles/Makefile2 glad/CMakeFiles/glad.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/WangZheng/Desktop/Fall2019/CG/Canvas/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/WangZheng/Desktop/Coding/Canvas/build/CMakeFiles 0
 .PHONY : glad/CMakeFiles/glad.dir/rule
 
 # Convenience name for target.

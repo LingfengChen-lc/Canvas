@@ -211,8 +211,8 @@ CMakeFiles/Canvas.dir/src/helpers.cpp.o
  ../ext/eigen/Eigen/src/plugins/MatrixCwiseUnaryOps.h
  ../ext/glad/include/KHR/khrplatform.h
  ../ext/glad/include/glad/glad.h
- /Users/WangZheng/Desktop/Fall2019/CG/Canvas/src/helpers.cpp
- /Users/WangZheng/Desktop/Fall2019/CG/Canvas/src/helpers.h
+ /Users/WangZheng/Desktop/Coding/Canvas/src/helpers.cpp
+ /Users/WangZheng/Desktop/Coding/Canvas/src/helpers.h
 CMakeFiles/Canvas.dir/src/main.cpp.o
  ../ext/eigen/Eigen/Cholesky
  ../ext/eigen/Eigen/Core
@@ -424,5 +424,5 @@ CMakeFiles/Canvas.dir/src/main.cpp.o
  ../ext/glad/include/KHR/khrplatform.h
  ../ext/glad/include/glad/glad.h
  ../ext/glfw/include/GLFW/glfw3.h
- /Users/WangZheng/Desktop/Fall2019/CG/Canvas/src/helpers.h
- /Users/WangZheng/Desktop/Fall2019/CG/Canvas/src/main.cpp
+ /Users/WangZheng/Desktop/Coding/Canvas/src/helpers.h
+ /Users/WangZheng/Desktop/Coding/Canvas/src/main.cpp

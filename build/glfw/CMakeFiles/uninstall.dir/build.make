@@ -43,10 +43,10 @@ RM = /usr/local/Cellar/cmake/3.15.3/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/WangZheng/Desktop/Fall2019/CG/Canvas
+CMAKE_SOURCE_DIR = /Users/WangZheng/Desktop/Coding/Canvas
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/WangZheng/Desktop/Fall2019/CG/Canvas/build
+CMAKE_BINARY_DIR = /Users/WangZheng/Desktop/Coding/Canvas/build
 
 # Utility rule file for uninstall.
 
@@ -54,7 +54,7 @@ CMAKE_BINARY_DIR = /Users/WangZheng/Desktop/Fall2019/CG/Canvas/build
 include glfw/CMakeFiles/uninstall.dir/progress.make
 
 glfw/CMakeFiles/uninstall:
-	cd /Users/WangZheng/Desktop/Fall2019/CG/Canvas/build/glfw && /usr/local/Cellar/cmake/3.15.3/bin/cmake -P /Users/WangZheng/Desktop/Fall2019/CG/Canvas/build/glfw/cmake_uninstall.cmake
+	cd /Users/WangZheng/Desktop/Coding/Canvas/build/glfw && /usr/local/Cellar/cmake/3.15.3/bin/cmake -P /Users/WangZheng/Desktop/Coding/Canvas/build/glfw/cmake_uninstall.cmake
 
 uninstall: glfw/CMakeFiles/uninstall
 uninstall: glfw/CMakeFiles/uninstall.dir/build.make
@@ -67,10 +67,10 @@ glfw/CMakeFiles/uninstall.dir/build: uninstall
 .PHONY : glfw/CMakeFiles/uninstall.dir/build
 
 glfw/CMakeFiles/uninstall.dir/clean:
-	cd /Users/WangZheng/Desktop/Fall2019/CG/Canvas/build/glfw && $(CMAKE_COMMAND) -P CMakeFiles/uninstall.dir/cmake_clean.cmake
+	cd /Users/WangZheng/Desktop/Coding/Canvas/build/glfw && $(CMAKE_COMMAND) -P CMakeFiles/uninstall.dir/cmake_clean.cmake
 .PHONY : glfw/CMakeFiles/uninstall.dir/clean
 
 glfw/CMakeFiles/uninstall.dir/depend:
-	cd /Users/WangZheng/Desktop/Fall2019/CG/Canvas/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/WangZheng/Desktop/Fall2019/CG/Canvas /Users/WangZheng/Desktop/Fall2019/CG/Canvas/ext/glfw /Users/WangZheng/Desktop/Fall2019/CG/Canvas/build /Users/WangZheng/Desktop/Fall2019/CG/Canvas/build/glfw /Users/WangZheng/Desktop/Fall2019/CG/Canvas/build/glfw/CMakeFiles/uninstall.dir/DependInfo.cmake --color=$(COLOR)
+	cd /Users/WangZheng/Desktop/Coding/Canvas/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/WangZheng/Desktop/Coding/Canvas /Users/WangZheng/Desktop/Coding/Canvas/ext/glfw /Users/WangZheng/Desktop/Coding/Canvas/build /Users/WangZheng/Desktop/Coding/Canvas/build/glfw /Users/WangZheng/Desktop/Coding/Canvas/build/glfw/CMakeFiles/uninstall.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : glfw/CMakeFiles/uninstall.dir/depend
 
