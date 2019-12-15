@@ -19,15 +19,17 @@ using namespace Eigen;
 
 bool draw, erase, erase_hold, move_mode, delete_mode, chang_color, selected, move_hold, move_second_click;
 
+std::vector<Matrix4f> transforms;
+Matrix4f transform;
 std::vector<int> inside_points_select;
-std::vector<Vector2f> coor_difference;
+Matrix4f select_box;
 std::vector<bool> mode_list;
 
 float angle_10 = 10*M_PI/180;
 float angle = 0.0;
 
 Vector3f centroid;
-int points = 3, k=3;
+int points=3, k=3;
 float rubber_diameter = 0.1, point_size = 5.0;
 Matrix4f view;
 Matrix4f rubber_box;
@@ -39,8 +41,6 @@ VertexBufferObject VBO, click_VBO;
 VertexBufferObject VBO_color, click_VBO_color;
 
 //transform matrix
-std::vector<Matrix4f> transforms;
-Matrix4f transform = Eigen::Matrix4f::Identity();
 Matrix4f rotate_clock;
 Matrix4f rotate_normal;		
 Matrix4f scale_up;
@@ -50,14 +50,20 @@ Vector3f RED(1.0f, 0.0f, 0.0f);
 Vector3f WHITE(1.0f, 1.0f, 1.0f);
 Vector3f GRAY(0.5f, 0.5f, 0.5f);
 
+Vector3f C1(0.2f, 0.3f, 0.6f);
+Vector3f C2(0.4f, 0.1f, 0.2f);
+Vector3f C3(0.2f, 0.9f, 0.6f);
+
+Vector3f Current_Color = RED;
+
 Vector4f move_click;
 Vector4f move_click2;
 
 MatrixXf Full(4,3);
 MatrixXf Color(3,3);
 
-MatrixXf click(4,3);
-MatrixXf click_color(3,3);
+
+
 
 // Mesh object, with both CPU data (Eigen::Matrix) and GPU data (the VBOs)
 struct Mesh {
@@ -122,20 +128,22 @@ Matrix4f creat_rubber(const float &x, const float &y) {
 }	
 
 
-//detect if the given vertex inside the rubber
-std::vector<int> inside_box(std::vector<int> &rst, const Matrix4f &box){
+//detect if the given vertex inside the rubber   (after transform)
+void inside_box(std::vector<int> &rst, const Matrix4f &box){
 	Vector4f B_L = box.col(3);
 	Vector4f U_R = box.col(1);
 	for (int i = 0; i < Full.cols(); ++i){
-		float x = Full.col(i)(0);
-		float y = Full.col(i)(1);
+		float x = (transforms[i] * Full.col(i))(0);
+		float y = (transforms[i] * Full.col(i))(1);
+		// float x = Full.col(i)(0);
+		// float y = Full.col(i)(1);
 		if (x > B_L(0) && x < U_R(0)){
 			if (y > B_L(1) && y < U_R(1)){
 				rst.push_back(i);
 			}
 		}
 	}
-	return rst;
+	return;
 }
 
 void remove_column(MatrixXf &matrix, int &ColToRemove){
@@ -182,9 +190,6 @@ void mouse_move_callback(GLFWwindow* window, double xpos, double ypos) {
 	if (erase){
 		//draw a rectangle around the world position
 		rubber_box = creat_rubber(world[0], world[1]);
-		// std::cerr << "rubber_box: " << rubber_box << std::endl;
-		// std::cerr << "erase: " << erase << std::endl;
-		// std::cerr << "draw: " << draw << std::endl;	
 		
 		Full.col(points) =  rubber_box.col(0);
 		Full.col(points+1) =  rubber_box.col(1);
@@ -196,108 +201,90 @@ void mouse_move_callback(GLFWwindow* window, double xpos, double ypos) {
 		Color.col(points+3) << WHITE;
 		if (erase_hold) {
 			std::vector<int> list_pt_inside;
+			list_pt_inside.clear();
 			inside_box(list_pt_inside, rubber_box);
-			// std::cerr << "points inside: " << list_pt_inside.size() << std::endl;
 			int num_points_inside = list_pt_inside.size();
 
 			for (int i = 0; i < num_points_inside; ++i){
 				erase_by_change_color(Color, list_pt_inside[i]);
-				// remove_column(Full, list_pt_inside[i]);
-				// remove_column(Color, list_pt_inside[i]);
+
 			}
-			// points -= num_points_inside;
 		}
-		// std::cerr << "erase_hold: " << erase_hold << std::endl;
 	}
 
 	else if (draw){
+		//add points and add matrix
 		Full.conservativeResize(4,points+1);
-		// std::cerr << "columns num: "  << Full.cols() << std::endl;
 		Full.col(points) = world;
 		Color.conservativeResize(3,points+1);
-		Color.col(points) << RED;
+		Color.col(points) = Current_Color;
 		points++;
-		// std::cerr << points << std::endl;
+		transforms.push_back(Matrix4f::Identity());
 	}
 	else if (move_hold){
-		Full.conservativeResize(4,points+4);
-		Vector4f a(move_click(0), world(1), 0.0f, 1.0f);   // same x differnt y
-		Vector4f b(world(0), move_click(1), 0.0f, 1.0f);   // same y differnt x
-		Vector4f c(world(0), world(1), 0.0f, 1.0f);   // different x differnt y
-		Full.col(points) = move_click;
-		Full.col(points+1) = a;
-		Full.col(points+2) = c;
-		Full.col(points+3) = b;
-		Color.col(points) << WHITE;
-		Color.col(points+1) << WHITE;
-		Color.col(points+2) << WHITE;
-		Color.col(points+3) << WHITE;
+		if (!move_second_click){
+			Vector4f a(move_click(0), world(1), 0.0f, 1.0f);   // same x differnt y
+			Vector4f b(world(0), move_click(1), 0.0f, 1.0f);   // same y differnt x
+			Vector4f c(world(0), world(1), 0.0f, 1.0f);   // different x differnt y
+			Full.col(points) = move_click;
+			Full.col(points+1) = a;
+			Full.col(points+2) = c;
+			Full.col(points+3) = b;
+			Color.col(points) << WHITE;
+			Color.col(points+1) << WHITE;
+			Color.col(points+2) << WHITE;
+			Color.col(points+3) << WHITE;
 
-		Matrix4f select_box;
 
-		if (a(1) > move_click(1) && b(0) > move_click(0)){
-			select_box.col(0) = a;
-			select_box.col(1) = c;
-			select_box.col(2) = b;
-			select_box.col(3) = move_click;
-		}
-		else if (a(1) > move_click(1) && b(0) < move_click(0)){
-			select_box.col(0) = c;
-			select_box.col(1) = a;
-			select_box.col(2) = move_click;
-			select_box.col(3) = b;
-		}
-		else if (a(1) < move_click(1) && b(0) > move_click(0)){
-			select_box.col(0) = move_click;
-			select_box.col(1) = b;
-			select_box.col(2) = c;
-			select_box.col(3) = a;
-		}
-		else if (a(1) < move_click(1) && b(0) < move_click(0)){
-			select_box.col(0) = b;
-			select_box.col(1) = move_click;
-			select_box.col(2) = a;
-			select_box.col(3) = c;
-		}
-		inside_box(inside_points_select, select_box);
 
-		// std::vector<Vector2f> coor_difference;
-		// for (int i = 0; i < inside_points_select.size(); ++i){
-		// 	Vector2f diff;
-		// 	diff(0) = Full.col(inside_points_select[i])(0) - world(0);
-		// 	diff(1) = Full.col(inside_points_select[i])(1) - world(1);
-		// 	coor_difference.push_back(diff);
-		// }
-
-		// std::cerr << "size of "
-		if (move_second_click) {
-
-			// float x_dis = world(0) - move_click2(0);
-			// float y_dis = world(1) - move_click2(1);
-			Vector2f ul = Vector2f(a(0) - move_click2(0), a(1) - move_click2(1));
-			Vector2f ur = Vector2f(b(0) - move_click2(0), b(1) - move_click2(1));
-			Vector2f bl = Vector2f(c(0) - move_click2(0), c(1) - move_click2(1));
-			Vector2f br = Vector2f(move_click(0) - move_click2(0), move_click(1) - move_click2(1));
-			
-			coor_difference.push_back(ul);
-			coor_difference.push_back(ur);
-			coor_difference.push_back(bl);
-			coor_difference.push_back(br);   // four box vertex
-
-			int sizz = inside_points_select.size();
-
-			for (int i = 0; i < sizz; ++i){
-				Full.col(inside_points_select[i])(0) = world(0) + coor_difference[i](0);
-				Full.col(inside_points_select[i])(1) = world(1) + coor_difference[i](1);          //modify the position of points on CPU side
+			if (a(1) > move_click(1) && b(0) > move_click(0)){
+				select_box.col(0) = a;
+				select_box.col(1) = c;
+				select_box.col(2) = b;
+				select_box.col(3) = move_click;
 			}
-			Full.col(points)(0) = world(0) + coor_difference[sizz](0);
-			Full.col(points)(1) = world(1) + coor_difference[sizz](1);
-			Full.col(points+1)(0) = world(0) + coor_difference[sizz+1](0);
-			Full.col(points+1)(1) = world(1) + coor_difference[sizz+1](1);
-			Full.col(points+2)(0) = world(0) + coor_difference[sizz+2](0);
-			Full.col(points+2)(1) = world(1) + coor_difference[sizz+2](1);
-			Full.col(points+3)(0) = world(0) + coor_difference[sizz+3](0);
-			Full.col(points+3)(1) = world(1) + coor_difference[sizz+3](1);
+			else if (a(1) > move_click(1) && b(0) < move_click(0)){
+				select_box.col(0) = c;
+				select_box.col(1) = a;
+				select_box.col(2) = move_click;
+				select_box.col(3) = b;
+			}
+			else if (a(1) < move_click(1) && b(0) > move_click(0)){
+				select_box.col(0) = move_click;
+				select_box.col(1) = b;
+				select_box.col(2) = c;
+				select_box.col(3) = a;
+			}
+			else if (a(1) < move_click(1) && b(0) < move_click(0)){
+				select_box.col(0) = b;
+				select_box.col(1) = move_click;
+				select_box.col(2) = a;
+				select_box.col(3) = c;
+			}
+			
+		}
+
+
+		//second click happens
+		else {
+			
+			float x_dis = world(0) - move_click2(0);
+			float y_dis = world(1) - move_click2(1);
+
+			transform.resize(4,4);
+			transform << 1.0f, 0.0f, 0.0f, x_dis,
+					0.0f, 1.0f, 0.0f, y_dis,
+					0.0f, 0.0f, 1.0f, 0.0f,
+					0.0f, 0.0f, 0.0f, 1.0f;
+
+			for (int i = 0; i < inside_points_select.size(); ++i){
+				transforms[inside_points_select[i]] = transform * transforms[inside_points_select[i]];
+			}
+			transforms[points] = transform * transforms[points];
+			transforms[points+1] = transform * transforms[points+1];
+			transforms[points+2] = transform * transforms[points+2];
+			transforms[points+3] = transform * transforms[points+3];
+			move_click2 << world(0), world(1), 0.0, 1.0;
 		}
 	}
 	VBO.update(Full);
@@ -306,10 +293,6 @@ void mouse_move_callback(GLFWwindow* window, double xpos, double ypos) {
 }
 ////////////////////////////////////////////////////////////////////////////////
 
-// bool inside_mesh(const Mesh &mesh, const float &x, const float &y){
-// 	mesh.
-// 	return true;
-// }
 
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
@@ -345,14 +328,8 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action != GLFW_RELEASE){
 		glfwSetCursorPosCallback(window, mouse_move_callback);
-		// Full.conservativeResize(4,points+1);
-		// Full.col(points) << world;
-		// Color.conservativeResize(3,points+1);
-		// Color.col(points) << RED;
-		// points++;
-		//if erase mode is on, then enable erase
-		// std::cerr << "mouse press" << std::endl;
-		// std::cerr << "Full cols: " << Full.cols() << std::endl;
+		Full.conservativeResize(4,points+4);
+		Color.conservativeResize(3, points+4);
 		if (erase){
 			erase_hold = true;
 		}
@@ -360,66 +337,51 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 			if (!move_second_click){
 				move_hold = true;
 				move_click = world;
+				transforms[points] = Matrix4f::Identity();
+				transforms[points+1] = Matrix4f::Identity();
+				transforms[points+2] = Matrix4f::Identity();
+				transforms[points+3] = Matrix4f::Identity();
 			}
 			else{
 				move_click2 = world;
 				move_hold = true;
 			}
 		}
-		// if (move_mode){
-		// 	if (inside_mesh){
-		// 		selected = true;
-		// 	}
-		// }
+
 	}
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
 		if (erase){
 			erase_hold = false;
 		}
 		else if (move_mode){
-			move_hold =false;
-			if (move_second_click){
-				move_second_click = false;
+			if (!move_second_click) {
+				move_second_click = true;
+				inside_box(inside_points_select, select_box);
 			}
 			else {
-				
-				for (int i = 0; i < inside_points_select.size(); ++i){
-					Vector2f diff;
-					diff(0) = Full.col(inside_points_select[i])(0) - world(0);
-					diff(1) = Full.col(inside_points_select[i])(1) - world(1);
-					coor_difference.push_back(diff);
-				}
-				move_second_click = true;
+				move_second_click = false;
+				Color.col(points) = GRAY;
+				Color.col(points+1) = GRAY;
+				Color.col(points+2) = GRAY;
+				Color.col(points+3) = GRAY;
+				move_click = world;
+				inside_points_select.clear();
 			}
+			move_hold =false;
 		}
 		else {
 			glfwSetCursorPosCallback(window, NULL);
 		}
 
-		std::cerr << "mouse release" << std::endl;
 	}
 
-	// if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS){
-	// 	click.conservativeResize(4,k+1);
-	// 	click.col(k) << world;
-	// 	click_color.conservativeResize(3,k+1);
-	// 	click_color.col(k) << 0.0f, 0.0f, 1.0f;
-	// 	k++;
-	// }
+
 	VBO.update(Full);
 	VBO_color.update(Color);
 	return;
 
 }
 
-//enable the specified mode and disable all the rest
-// void enable (bool &mode){
-// 	for (auto i = mode_list.begin(); i != mode_list.end(); ++i) {
-// 		*i = false;
-// 	}
-// 	mode = false;
-// 	return;
-// }
 
 Vector2f get_triangle_centroid(const Vector4f &a, const Vector4f &b, const Vector4f &c) {
 	Vector2f centroid;
@@ -513,21 +475,12 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if (action == GLFW_PRESS) {
 		switch (key) {
 			case GLFW_KEY_I:
-				if (erase){
-					erase = false;
-					Full.conservativeResize(4, points);
-				}
+				Full.conservativeResize(4,points);
+				Color.conservativeResize(3, points);
+				erase = false;
+				move_mode = false;
 				draw = true;
-				erase_hold = false;
 				glfwSetCursorPosCallback(window, NULL);
-				// draw = true;
-				// if (selected) {
-				// 	Color.block<3,3>(0,index_to_triangle) = temp_color;
-				// 	VBO_color.update(Color);
-				// 	selected = false;
-				// }
-				// delete_mode = false;
-				// change_color = false;
 				break;
 
 			case GLFW_KEY_O:
@@ -536,28 +489,25 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 				erase = false;
 				Full.conservativeResize(4,points);
 				Color.conservativeResize(3, points);
-				Full.conservativeResize(4,points+4);
-				Color.conservativeResize(3, points+4);
-				// change_color = false;
+				transforms.push_back(Matrix4f::Identity());
+				transforms.push_back(Matrix4f::Identity());
+				transforms.push_back(Matrix4f::Identity());
+				transforms.push_back(Matrix4f::Identity());
 				break;
 			case GLFW_KEY_P:
 				erase = true;
 				draw = false;
-				//register move callback
+				move_mode = false;
 				Full.conservativeResize(4,points);
 				Color.conservativeResize(3, points);
 				Full.conservativeResize(4,points+4);
 				Color.conservativeResize(3, points+4);
 				glfwSetCursorPosCallback(window, mouse_move_callback);
-				// draw_mode = false;	
-				// if (selected) {
-				// 	Color.block<3,3>(0,index_to_triangle) = temp_color;
-				// 	VBO_color.update(Color);
-				// 	selected = false;
-				// }
-				// move_mode = false;
-				// delete_mode = true;
-				// change_color = false;
+				transforms[points] = Matrix4f::Identity();
+				transforms[points+1] = Matrix4f::Identity();
+				transforms[points+2] = Matrix4f::Identity();
+				transforms[points+3] = Matrix4f::Identity();
+				
 				break;
 			case GLFW_KEY_1:
 				load_off(DATA_DIR "bunny.off", bunny1.V, bunny1.F);
@@ -577,109 +527,62 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 				bunny3.F_vbo.update(bunny3.F);
 				current_mesh = bunny3;
 				break;
-			case GLFW_KEY_4:
-				// enable(draw);
-				// draw = true;
-				// erase = false;
-				// erase_hold = false;
-				// glfwSetCursorPosCallback(window, NULL);
+			case GLFW_KEY_4:      
+				if (draw){
+					Current_Color = C1;
+				}
 				break;
-			case GLFW_KEY_U:
-				// glEnable(GL_PROGRAM_POINT_SIZE);
-				point_size+=1.0;
-				glPointSize(point_size);
 			case GLFW_KEY_5:
-				// enable(erase);
-				// erase = true;
-				// draw = false;
-				// //register move callback
-				// Full.conservativeResize(4,points+4);
-				// Color.conservativeResize(3, points+4);
-				// glfwSetCursorPosCallback(window, mouse_move_callback);
+				if (draw){
+					Current_Color = C2;
+				}
 				break;
+			case GLFW_KEY_6:
+				if (draw){
+					Current_Color = C3;
+				}
+				break;
+
+			case GLFW_KEY_7:
+				point_size-=1;
+				break;
+			case GLFW_KEY_8:
+				point_size+=1;
+				break;
+
 
 			case GLFW_KEY_W:
 				Translate(current_mesh.trans, 0.0, 0.1, 0.0);
-				std::cerr << "trans: " << current_mesh.trans << std::endl;	
 				break;
 
 			case GLFW_KEY_H:
-					// Vector3i vertices = bunny.F.col(i);  // <3, 7, 9>
-					// Vector4f a(bunny.V(0,vertices(0)), bunny.V(1,vertices(0)), bunny.V(2,vertices(0)), 0.0);
-					// a = bunny.trans * a;
-					// Vector4f b(bunny.V(0,vertices(1)), bunny.V(1,vertices(1)), bunny.V(2,vertices(1)), 0.0);
-					// b = bunny.trans * b;
-					// Vector4f c(bunny.V(0,vertices(2)), bunny.V(1,vertices(2)), bunny.V(2,vertices(2)), 0.0);
-					// c = bunny.trans * c;
 
 				centroid = find_mesh_centroid(current_mesh.trans, current_mesh.V, current_mesh.F);
 				Translate(current_mesh.trans, -centroid(0), -centroid(1), -centroid(2));
 				Rotate_clock(current_mesh.trans);
 				Translate(current_mesh.trans, centroid(0), centroid(1), centroid(2));
-				std::cerr << "trans: " << current_mesh.trans << std::endl;	
 				break;
-				// if (move_mode && selected && action != GLFW_RELEASE) {
 
-				// 	angle += 10*M_PI/180; // 1du = pi/180
-
-				// 	//determine the real vertex position
-				// 	Vector4f a(Full(0, index_to_triangle), Full(1, index_to_triangle), 0.0, 1.0);
-				// 	a = transforms[index_to_triangle / 3] * a;
-				// 	Vector4f b(Full(0, index_to_triangle+1), Full(1, index_to_triangle+1), 0.0, 1.0);
-				// 	b = transforms[index_to_triangle / 3] * b;
-				// 	Vector4f c(Full(0, index_to_triangle+2), Full(1, index_to_triangle+2), 0.0, 1.0);
-				// 	c = transforms[index_to_triangle / 3] * c;
-
-				// 	Vector2f centroid = get_triangle_centroid(a, b, c);
-				// 	Translate(-centroid(0), -centroid(1));
-				// 	Rotate_clock();
-				// 	Translate(centroid(0), centroid(1));				
-				// }
 			case GLFW_KEY_J:
-					// Vector3i vertices = bunny.F.col(i);  // <3, 7, 9>
 
-					// Vector4f a(bunny.V(0,vertices(0)), bunny.V(1,vertices(0)), bunny.V(2,vertices(0)), 0.0);
-					// a = transform * a;
-					// Vector4f b(bunny.V(0,vertices(1)), bunny.V(1,vertices(1)), bunny.V(2,vertices(1)), 0.0);
-					// b = transform * b;
-					// Vector4f c(bunny.V(0,vertices(2)), bunny.V(1,vertices(2)), bunny.V(2,vertices(2)), 0.0);
-					// c = transform * c;
 				centroid = find_mesh_centroid(current_mesh.trans, current_mesh.V, current_mesh.F);
 				Translate(current_mesh.trans, -centroid(0), -centroid(1), -centroid(2));
 				Rotate_con_clock(current_mesh.trans);
 				Translate(current_mesh.trans, centroid(0), centroid(1), centroid(2));	
-				std::cerr << "trans: " << current_mesh.trans << std::endl;
 				break;
 			case GLFW_KEY_K:
-					// Vector3i vertices = bunny.F.col(i);  // <3, 7, 9>
 
-					// Vector4f a(bunny.V(0,vertices(0)), bunny.V(1,vertices(0)), bunny.V(2,vertices(0)), 0.0);
-					// a = transform * a;
-					// Vector4f b(bunny.V(0,vertices(1)), bunny.V(1,vertices(1)), bunny.V(2,vertices(1)), 0.0);
-					// b = transform * b;
-					// Vector4f c(bunny.V(0,vertices(2)), bunny.V(1,vertices(2)), bunny.V(2,vertices(2)), 0.0);
-					// c = transform * c;
 				centroid = find_mesh_centroid(current_mesh.trans, current_mesh.V, current_mesh.F);
-				std::cerr << "centroid pos: " << centroid << std::endl;
 				Translate(current_mesh.trans, -centroid(0), -centroid(1), -centroid(2));
 				Bigger(current_mesh.trans);
 				Translate(current_mesh.trans, centroid(0), centroid(1), centroid(2));	
-				// std::cerr << "trans: " << bunny.trans << std::endl;
 				break;
 			case GLFW_KEY_L:
-					// Vector3i vertices = bunny.F.col(i);  // <3, 7, 9>
 
-					// Vector4f a(bunny.V(0,vertices(0)), bunny.V(1,vertices(0)), bunny.V(2,vertices(0)), 0.0);
-					// a = transform * a;
-					// Vector4f b(bunny.V(0,vertices(1)), bunny.V(1,vertices(1)), bunny.V(2,vertices(1)), 0.0);
-					// b = transform * b;
-					// Vector4f c(bunny.V(0,vertices(2)), bunny.V(1,vertices(2)), bunny.V(2,vertices(2)), 0.0);
-					// c = transform * c;
 				centroid = find_mesh_centroid(current_mesh.trans, current_mesh.V, current_mesh.F);
 				Translate(current_mesh.trans, -centroid(0), -centroid(1), -centroid(2));
 				Smaller(current_mesh.trans);
 				Translate(current_mesh.trans, centroid(0), centroid(1), centroid(2));
-				std::cerr << "trans: " << current_mesh.trans << std::endl;	
 				break;
 			default:
 				break;
@@ -893,40 +796,6 @@ int main(void) {
 		
 	}
 
-	// 	bunny2.V.resize(3, 3);
-	// 	bunny2.V <<
-	// 		0, 0.5, -0.5,
-	// 		0.5, -0.5, -0.5,
-	// 		0, 0, 0;
-	// 	bunny2.V_vbo.update(bunny2.V);
-
-	// 	bunny3.V.resize(3, 3);
-	// 	bunny3.V <<
-	// 		0, 0.5, -0.5,
-	// 		0.5, -0.5, -0.5,
-	// 		0, 0, 0;
-	// 	bunny3.V_vbo.update(bunny3.V);
-
-
-	// 	bunny2.V.resize(3, 3);
-	// 	bunny2.V <<
-	// 		0, 0.5, -0.5,
-	// 		0.5, -0.5, -0.5,
-	// 		0, 0, 0;
-	// 	bunny2.V_vbo.update(bunny2.V);
-
-	// 	bunny3.V.resize(3, 3);
-	// 	bunny3.V <<
-	// 		0, 0.5, -0.5,
-	// 		0.5, -0.5, -0.5,
-	// 		0, 0, 0;
-	// 	bunny3.V_vbo.update(bunny3.V);
-	
-	// program.bindVertexAttribArray("position", bunny2.V_vbo);
-	// 	bunny2.vao.unbind();
-	// 	program.bindVertexAttribArray("position", bunny3.V_vbo);
-	// 	bunny3.vao.unbind();
-
 	// For the first exercises, 'view' and 'proj' will be the identity matrices
 	// However, the 'model' matrix must change for each model in the scene
 	Eigen::Matrix4f I = Eigen::Matrix4f::Identity();
@@ -944,23 +813,8 @@ int main(void) {
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
 
 	VBO.init(GL_FLOAT, GL_ARRAY_BUFFER);
-	click_VBO.init(GL_FLOAT, GL_ARRAY_BUFFER);
 
 	VBO_color.init(GL_FLOAT, GL_ARRAY_BUFFER);
-	click_VBO_color.init(GL_FLOAT, GL_ARRAY_BUFFER);
-
-	click.resize(4,3);
-	click << 0,  0.5, -0.5, 
-		0.5, -0.5, -0.5,
-		0.0, 0.0, 0.0,
-		1.0, 1.0, 1.0;
-	click_VBO.update(click);
-
-	click_color.resize(3,3);
-	click_color << 1.0f,  1.0f, 1.0f, 
-		0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f;
-	click_VBO_color.update(click_color);
 
 	//initiate Full and Color
 	Full.resize(4,3);
@@ -968,6 +822,10 @@ int main(void) {
 		0.5, -0.5, -0.5,
 		0.0, 0.0, 0.0,
 		1.0, 1.0, 1.0;
+	
+	transforms.push_back(Matrix4f::Identity());
+	transforms.push_back(Matrix4f::Identity());
+	transforms.push_back(Matrix4f::Identity());
 	VBO.update(Full);
 
 	Color.resize(3,3);
@@ -984,24 +842,15 @@ int main(void) {
 	program.bindVertexAttribArray("color", VBO_color);
 	VAO.unbind();
 
-	// VertexArrayObject click_VAO;
-	// click_VAO.init();
-	// click_VAO.bind();
-	// program.bindVertexAttribArray("position", click_VBO);
-	// program.bindVertexAttribArray("color", click_VBO_color);
-	// click_VAO.unbind();
 
 
-	//enable point size
-	// glEnable(GL_PROGRAM_POINT_SIZE);
 	glPointSize(point_size);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	// mode_list.push_back(draw);
-	// mode_list.push_back(erase);
-	
-	// glEnable(GL_MULTISAMPLE);
+	glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+	glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
 	
 	// Loop until the user closes the window
 	while (!glfwWindowShouldClose(window)) {
@@ -1029,15 +878,7 @@ int main(void) {
 			// Bind the VAO for the bunny
 			bunny1.vao.bind();
 
-			// Model matrix for the bunny
-			// program.bindVertexAttribArray("position", bunny1.V_vbo);
-
 			glUniformMatrix4fv(program.uniform("model"), 1, GL_FALSE, bunny1.trans.data());
-
-			// Set the uniform value depending on the time difference
-			// auto t_now = std::chrono::high_resolution_clock::now();
-			// float time = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
-			// glUniform3f(program.uniform("triangleColor"), (float)(sin(time * 4.0f) + 1.0f) / 2.0f, 0.0f, 0.0f);
 
 			// Draw the triangles
 			// glDrawArrays(GL_LINE_LOOP, 0, 1000);
@@ -1054,11 +895,6 @@ int main(void) {
 			// program.bindVertexAttribArray("position", bunny1.V_vbo);
 
 			glUniformMatrix4fv(program.uniform("model"), 1, GL_FALSE, bunny2.trans.data());
-
-			// Set the uniform value depending on the time difference
-			// auto t_now = std::chrono::high_resolution_clock::now();
-			// float time = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
-			// glUniform3f(program.uniform("triangleColor"), (float)(sin(time * 4.0f) + 1.0f) / 2.0f, 0.0f, 0.0f);
 
 			// Draw the triangles
 			// glDrawArrays(GL_LINE_LOOP, 0, 1000);
@@ -1088,86 +924,33 @@ int main(void) {
 			bunny3.vao.unbind();
 		}
 
-		// {
-		// 	// Bind the VAO for the bunny
-		// 	bunny2.vao.bind();
+		VAO.bind();
+		if (erase || move_mode) {
+			for (int i = 0; i < Full.cols() - 7; ++i){
+			
+			glUniformMatrix4fv(program.uniform("model"), 1, GL_FALSE, transforms[i].data());
 
-		// 	// Model matrix for the bunny
-		// 	program.bindVertexAttribArray("position", bunny2.V_vbo);
+			glPointSize(point_size);
 
-		// 	glUniformMatrix4fv(program.uniform("model"), 1, GL_FALSE, bunny2.trans.data());
+			glDrawArrays(GL_POINTS, 3+i, 1);
 
-		// 	// Set the uniform value depending on the time difference
-		// 	// auto t_now = std::chrono::high_resolution_clock::now();
-		// 	// float time = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
-		// 	// glUniform3f(program.uniform("triangleColor"), (float)(sin(time * 4.0f) + 1.0f) / 2.0f, 0.0f, 0.0f);
-
-		// 	// Draw the triangles
-		// 	// glDrawArrays(GL_LINE_LOOP, 0, 1000);
-		// 	glDrawElements(GL_TRIANGLES, 3 * bunny2.F.cols(), bunny2.F_vbo.scalar_type, 0);
-
-		// 	bunny2.vao.unbind();
-		// }
-
-		// {
-		// 	// Bind the VAO for the bunny
-		// 	bunny3.vao.bind();
-
-		// 	// Model matrix for the bunny
-		// 	program.bindVertexAttribArray("position", bunny3.V_vbo);
-
-		// 	glUniformMatrix4fv(program.uniform("model"), 1, GL_FALSE, bunny3.trans.data());
-
-		// 	// Set the uniform value depending on the time difference
-		// 	// auto t_now = std::chrono::high_resolution_clock::now();
-		// 	// float time = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
-		// 	// glUniform3f(program.uniform("triangleColor"), (float)(sin(time * 4.0f) + 1.0f) / 2.0f, 0.0f, 0.0f);
-
-		// 	// Draw the triangles
-		// 	// glDrawArrays(GL_LINE_LOOP, 0, 1000);
-		// 	glDrawElements(GL_TRIANGLES, 3 * bunny3.F.cols(), bunny3.F_vbo.scalar_type, 0);
-
-		// 	bunny3.vao.unbind();
-		// }
-
-
-
-		if (draw){
-
-			VAO.bind();
-			// program.bindVertexAttribArray("position", click_VBO);
-			// program.bindVertexAttribArray("color", click_VBO_color);
-			glDrawArrays(GL_POINTS, 3, Full.cols() - 3);
-			// std::cerr<<"click.cols: " << click.cols() << std::endl;
-
-			// for (int i = 0; i < click.cols(); i++){
-			// }
-	
-			VAO.unbind();
 		}
-
-		else if (erase || move_mode) {
-			VAO.bind();
-			glDrawArrays(GL_POINTS, 3, Full.cols() - 7);
+			glUniformMatrix4fv(program.uniform("model"), 1, GL_FALSE, transforms[points].data());
 			glDrawArrays(GL_LINE_LOOP, Full.cols() - 4, 4);
-			//cant reach
-			VAO.unbind();
 		}
+		else {
+			for (int i = 0; i < Full.cols() - 3; ++i){
 
-		// else if (move_mode) {
-		// 	VAO.bind();
-		// 	glDrawArrays(GL_POINTS, 3, Full.cols() - 7);
-		// 	glDrawArrays(GL_LINE_LOOP, Full.cols() - 4, 4);
-		// 	//cant reach
-		// 	VAO.unbind();
-		// }
+			glPointSize(point_size);
+			
+			glUniformMatrix4fv(program.uniform("model"), 1, GL_FALSE, transforms[i].data());
+			glDrawArrays(GL_POINTS, 3+i, 1);
 
-		// num_tri = 1;
+			}
+		}
+		
 
-		// for (int i = 0; i < num_tri*3; i+=3){
-		// 	glDrawArrays(GL_TRIANGLES, i, 3);
-		// }
-
+		VAO.unbind();
 		// Swap front and back buffers
 		glfwSwapBuffers(window);
 
@@ -1189,9 +972,6 @@ int main(void) {
 	VAO.free();
 	VBO.free();
 	VBO_color.free();
-	// click_VAO.free();
-	// click_VBO.free();
-	// click_VBO_color.free();
 
 	// Deallocate glfw internals
 	glfwTerminate();
